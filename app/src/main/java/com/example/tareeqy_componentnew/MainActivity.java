@@ -38,7 +38,7 @@ public class MainActivity extends AppCompatActivity {
     private class BusButtonClickListener implements View.OnClickListener {
         @Override
         public void onClick(View v) {
-            Intent intent = new Intent(MainActivity.this, BusScreen.class);
+            Intent intent = new Intent(MainActivity.this, customComponent.class);
             startActivity(intent);
         }
     }

@@ -7,6 +7,12 @@
     android:layout_height="match_parent"
     tools:context=".BusScreen">
 
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/constraintLayout"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="50dp"/>
+
     <Spinner
         android:id="@+id/spinner"
         android:layout_width="370dp"
@@ -22,11 +28,13 @@
         android:id="@+id/spinner2"
         android:layout_width="370dp"
         android:layout_height="wrap_content"
+        android:layout_marginTop="393dp"
         android:layout_marginBottom="48dp"
         app:layout_constraintBottom_toTopOf="@+id/button3"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.487"
-        app:layout_constraintStart_toStartOf="parent" />
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/constraintLayout" />
 
     <Button
         android:id="@+id/button3"

@@ -3,6 +3,7 @@ package com.example.tareeqy_componentnew;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -10,9 +11,11 @@ import android.widget.Spinner;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import java.util.ArrayList;
+
 
 public class MetroScreen extends AppCompatActivity {
-    DataBase db;
+    MetroDB db;
     ArrayAdapter<String> spinnerAdapter;
 
     @Override
@@ -23,23 +26,23 @@ public class MetroScreen extends AppCompatActivity {
 
 
 
-        Button busDetailsButton = findViewById(R.id.button3);
-
-        busDetailsButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(MetroScreen.this, MetroDetails.class);
-                startActivity(intent);
-            }
-        });
 
 
 
-        db = new DataBase(this);
-        String[] lines1 = {"New El Marg", "El Marg", "Ezbet El Nakhl","Ain Shams" ,"Matarya" , "Helmeyet El Zaton", "Hadayek El Zaton", "Saray El Qubba", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-        String[] lines2 = { "Shubra El Khema", "Koleyet El Zeraa", "El Mezalat", "El Khalafawy", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", "", ""};
-        String[] lines3 = { "Adly Mansour", "Haikstep", "Omar Bn El Khattab", "Qebaa", "Hesham Barakat", "Nozha", "El Shams Club", "Alf Maskan", "Heliopoles", "Haroun", "Kolleyet ElBanat", "Stadum", "Cairo Fair", "Abbasiya", "Abdo Pasha", "El Geish", "Bab El Shaariya", "", "", "", "", "", "", ""};
-        db.insertValues(lines1, lines2, lines3);
+
+
+        db = new MetroDB(this);
+        db.deleteAllRows();
+        String[] lines1 = {"Helwan", "Ain Helwan", "Helwan University", "Wadi Hof", "Hadayeq Helwan",
+                "El-Maasara", "Tora", "El-Asmant", "Kozzika", "Tora El-Balad",
+                "Thakanat El-Maadi", "Maadi", "Hadayeq El-Maadi", "Dar El-Salam",
+                "El-Zahraa'", "Mar Girgis", "El-Malek El-Saleh", "AlSayyeda Zeinab",
+                "Saad Zaghloul", "Sadat", "Gamal AbdAl", "Urabi", "Al Shohadaa",
+                "Ghamra", "El-Demerdash", "Manshiet El-Sadr", "Kobri El-Qobba",
+                "Hammamat El-Qobba", "Saray El-Qobba", "Hadayeq El-Zaitoun",
+                "Helmeyet El-Zaitoun", "El-Matareyya", "Ain Shams", "Ezbet El-Nakhl",
+                "El-Marg", "New El-Marg"};
+        db.insertValues(lines1);
 
         // Create a new ArrayAdapter for the Spinner
         spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
@@ -57,27 +60,35 @@ public class MetroScreen extends AppCompatActivity {
 
 
         // Query the database for the metro line data
-        String query = "SELECT " + DataBase.COLUMN_LINE1 + ", " + DataBase.COLUMN_LINE2 + ", " + DataBase.COLUMN_LINE3 + " FROM " + DataBase.MetroLines;
+        String query = "SELECT " + MetroDB.COLUMN_LINE1 + " FROM " + MetroDB.MetroLines;
         Cursor cursor = db.getReadableDatabase().rawQuery(query, null);
 
 
 
         // Add all items of line1[] first
-        for (String line1 : lines1) {
-            spinnerAdapter.add(line1);
-        }
-
-        // Then add all items of line2[]
-        for (String line2 : lines2) {
-            spinnerAdapter.add(line2);
-        }
-
-        // Finally, add all items of line3[]
-        for (String line3 : lines3) {
-            spinnerAdapter.add(line3);
+        if (cursor.moveToFirst()) {
+            do {
+                // Get the value of the column for the current row
+                String line1 = cursor.getString(cursor.getColumnIndexOrThrow(MetroDB.COLUMN_LINE1));
+                // Add the value to the spinner adapter
+                spinnerAdapter.add(line1);
+            } while (cursor.moveToNext()); // Move to the next row
         }
         cursor.close();
+        Button metroDetailsButton = findViewById(R.id.button3);
+        metroDetailsButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ArrayList<String> stations = db.getStations(spinner.getSelectedItem().toString(), spinner2.getSelectedItem().toString());
+                Intent intent = new Intent(MetroScreen.this, MetroDetails.class);
+                intent.putStringArrayListExtra("stations", stations);
+                startActivity(intent);
+
+            }
+        });
     }
+
+
 
     @Override
     protected void onDestroy() {
