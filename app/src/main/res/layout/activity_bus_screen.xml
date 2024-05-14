@@ -55,7 +55,7 @@
         android:id="@+id/textView4"
         android:layout_width="147dp"
         android:layout_height="37dp"
-        android:layout_marginStart="132dp"
+        android:layout_marginStart="120dp"
         android:layout_marginBottom="4dp"
         android:scaleX="2"
         android:scaleY="2"
@@ -67,9 +67,9 @@
         android:id="@+id/button4"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginEnd="52dp"
-        android:layout_marginBottom="28dp"
-        android:text="Add photo to your bus number"
+        android:layout_marginEnd="88dp"
+        android:layout_marginBottom="36dp"
+        android:text="Add your bus number"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 </androidx.constraintlayout.widget.ConstraintLayout>

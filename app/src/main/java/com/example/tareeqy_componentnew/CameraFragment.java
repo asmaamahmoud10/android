@@ -10,6 +10,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.graphics.Bitmap;
+import android.widget.Toast;
+
+
+import java.io.ByteArrayOutputStream;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -75,6 +80,7 @@ public class CameraFragment extends Fragment {
                         // For example, display the photo in an ImageView
                         capturedImage = rootView.findViewById(R.id.captured_image);
                         capturedImage.setImageBitmap(result);
+                        saveImageToDatabase(result);
                     }
                 });
         // Trigger the activity launch when necessary
@@ -84,5 +90,24 @@ public class CameraFragment extends Fragment {
             takePhotoLauncher.launch(null);
         });
         return rootView;
+    }
+
+    private void saveImageToDatabase(Bitmap bitmap) {
+        // Convert Bitmap to byte array
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
+        byte[] byteArray = stream.toByteArray();
+
+        // Insert image into the database
+        long newRowId = MyDbHelper.getInstance(getContext()).insertImage(byteArray);
+
+        // Check if insertion was successful
+        if (newRowId != -1) {
+            // Image inserted successfully
+            Toast.makeText(getContext(), "Image saved to database", Toast.LENGTH_SHORT).show();
+        } else {
+            // Error occurred while inserting image
+            Toast.makeText(getContext(), "Failed to save image to database", Toast.LENGTH_SHORT).show();
+        }
     }
 }

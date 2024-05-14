@@ -4,13 +4,15 @@ import android.os.Bundle;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.fragment.app.Fragment;
+import android.widget.Toast;
 
-import android.speech.RecognitionListener;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.speech.RecognitionListener;
+
 
 /**
  * A simple {@link Fragment} subclass.
@@ -64,13 +66,17 @@ public class VoiceFragment extends Fragment implements RecognitionListener {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
         View rootView = inflater.inflate(R.layout.fragment_voic, container, false);
 
         // Initialize the ActivityResultLauncher
-        speechRecognitionLauncher = registerForActivityResult(new com.example.fragments.VoiceResultContract(), result -> {
+        speechRecognitionLauncher = registerForActivityResult(new VoiceResultContract(), result -> {
             if (result != null) {
-                ((TextView) rootView.findViewById(R.id.txt_speech)).setText(result);
+                // Set recognized speech text to TextView
+                TextView speechTextView = rootView.findViewById(R.id.txt_speech);
+                speechTextView.setText(result);
+
+                // Save recognized speech to database
+                saveSpeechToDatabase(result);
             }
         });
 
@@ -82,7 +88,19 @@ public class VoiceFragment extends Fragment implements RecognitionListener {
 
         return rootView;
     }
+    private void saveSpeechToDatabase(String speech) {
+        // Insert speech into the database
+        long newRowId = MyDbHelperV.getInstance(getContext()).insertSpeech(speech);
 
+        // Check if insertion was successful
+        if (newRowId != -1) {
+            // Speech inserted successfully
+            Toast.makeText(getContext(), "Speech saved to database", Toast.LENGTH_SHORT).show();
+        } else {
+            // Error occurred while inserting speech
+            Toast.makeText(getContext(), "Failed to save speech to database", Toast.LENGTH_SHORT).show();
+        }
+    }
     @Override
     public void onReadyForSpeech(Bundle params) {
         // This method is called when the speech recognition engine is ready to receive speech input

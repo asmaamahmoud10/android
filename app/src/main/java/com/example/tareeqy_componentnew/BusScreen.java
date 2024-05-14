@@ -9,9 +9,6 @@ import android.widget.Button;
 import android.widget.Spinner;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.fragment.app.FragmentTransaction;
-import androidx.fragment.app.FragmentManager;
-
 
 
 public class BusScreen extends AppCompatActivity {
@@ -38,7 +35,7 @@ public class BusScreen extends AppCompatActivity {
         camera.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(BusScreen.this, cameraActivity.class);
+                Intent intent = new Intent(BusScreen.this, FragmentActivity.class);
                 startActivity(intent);
             }
         });

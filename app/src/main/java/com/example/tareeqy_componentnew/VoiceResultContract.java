@@ -1,4 +1,4 @@
-package com.example.fragments;
+package com.example.tareeqy_componentnew;
 
 import android.app.Activity;
 import android.content.Context;

@@ -24,6 +24,7 @@ public class MetroScreen extends AppCompatActivity {
 
 
         Button busDetailsButton = findViewById(R.id.button3);
+
         busDetailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -31,6 +32,7 @@ public class MetroScreen extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
 
 
         db = new DataBase(this);
