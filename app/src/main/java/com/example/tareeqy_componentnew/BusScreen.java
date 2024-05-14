@@ -7,12 +7,12 @@ import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-//import android.media.MediaPlayer;
-//import android.content.Context;
-
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.fragment.app.FragmentTransaction;
+import androidx.fragment.app.FragmentManager;
+
+
 
 public class BusScreen extends AppCompatActivity {
     BusDB db;
@@ -25,6 +25,8 @@ public class BusScreen extends AppCompatActivity {
         setContentView(R.layout.activity_bus_screen);
 
         Button busDetailsButton = findViewById(R.id.button3);
+        Button camera = findViewById(R.id.button4);
+
         busDetailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -33,7 +35,13 @@ public class BusScreen extends AppCompatActivity {
             }
         });
 
-
+        camera.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(BusScreen.this, cameraActivity.class);
+                startActivity(intent);
+            }
+        });
 
         db = new BusDB(this);
         String[] m31 = {"Matarya Square", "El Taawun", "Mostorod","Ring Road" ,"Adly Mansour" , "Obour Market", "Mostaqbal City", "New Administrative Capital"};
@@ -88,4 +96,5 @@ public class BusScreen extends AppCompatActivity {
         super.onDestroy();
         spinnerAdapter.clear();
     }
+
 }

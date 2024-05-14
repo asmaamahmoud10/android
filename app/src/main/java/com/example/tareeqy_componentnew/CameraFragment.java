@@ -2,19 +2,21 @@ package com.example.tareeqy_componentnew;
 
 import android.os.Bundle;
 
+import androidx.activity.result.ActivityResultLauncher;
 import androidx.fragment.app.Fragment;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageView;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link BlankFragment#newInstance} factory method to
+ * Use the {@link CameraFragment#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class BlankFragment extends Fragment {
+public class CameraFragment extends Fragment {
 
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
@@ -25,7 +27,7 @@ public class BlankFragment extends Fragment {
     private String mParam1;
     private String mParam2;
 
-    public BlankFragment() {
+    public CameraFragment() {
         // Required empty public constructor
     }
 
@@ -35,11 +37,11 @@ public class BlankFragment extends Fragment {
      *
      * @param param1 Parameter 1.
      * @param param2 Parameter 2.
-     * @return A new instance of fragment BlankFragment.
+     * @return A new instance of fragment CameraFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static BlankFragment newInstance(String param1, String param2) {
-        BlankFragment fragment = new BlankFragment();
+    public static CameraFragment newInstance(String param1, String param2) {
+        CameraFragment fragment = new CameraFragment();
         Bundle args = new Bundle();
         args.putString(ARG_PARAM1, param1);
         args.putString(ARG_PARAM2, param2);
@@ -56,14 +58,31 @@ public class BlankFragment extends Fragment {
         }
     }
 
+    private ImageView capturedImage;
+    private ActivityResultLauncher<Void> takePhotoLauncher;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-       // return inflater.inflate(R.layout.fragment_blank, container, false);
-        View rootView=
-            inflater.inflate(R.layout.fragment_blank, container,false);
-//        Button play = (Button)rootView.findViewById()
-        return  rootView;
+        View rootView = inflater.inflate(R.layout.fragment_camera, container, false);
+
+        // Initialize the activity result launcher
+        takePhotoLauncher = registerForActivityResult(CameraResultContact.TAKE_PHOTO,
+                result -> {
+                    if (result != null) {
+                        // Handle the captured photo URI
+                        // For example, display the photo in an ImageView
+                        capturedImage = rootView.findViewById(R.id.captured_image);
+                        capturedImage.setImageBitmap(result);
+                    }
+                });
+        // Trigger the activity launch when necessary
+        Button takePhotoButton = rootView.findViewById(R.id.btn_capture);
+        takePhotoButton.setOnClickListener(v -> {
+            // Launch the activity for capturing a photo
+            takePhotoLauncher.launch(null);
+        });
+        return rootView;
     }
 }
