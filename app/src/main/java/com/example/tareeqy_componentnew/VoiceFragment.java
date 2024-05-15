@@ -90,7 +90,7 @@ public class VoiceFragment extends Fragment implements RecognitionListener {
     }
     private void saveSpeechToDatabase(String speech) {
         // Insert speech into the database
-        long newRowId = MyDbHelperV.getInstance(getContext()).insertSpeech(speech);
+        long newRowId = VoiceDB.getInstance(getContext()).insertSpeech(speech);
 
         // Check if insertion was successful
         if (newRowId != -1) {

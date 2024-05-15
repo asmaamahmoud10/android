@@ -5,9 +5,11 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
 
@@ -17,22 +19,15 @@ import java.util.ArrayList;
 public class MetroScreen extends AppCompatActivity {
     MetroDB db;
     ArrayAdapter<String> spinnerAdapter;
-
+    private String selectedValueSpinner1 = null;
+    private String selectedValueSpinner2 = null;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_metro_screen);
 
-
-
-
-
-
-
-
-
         db = new MetroDB(this);
-        db.deleteAllRows();
+        /*db.deleteAllRows();
         String[] lines1 = {"Helwan", "Ain Helwan", "Helwan University", "Wadi Hof", "Hadayeq Helwan",
                 "El-Maasara", "Tora", "El-Asmant", "Kozzika", "Tora El-Balad",
                 "Thakanat El-Maadi", "Maadi", "Hadayeq El-Maadi", "Dar El-Salam",
@@ -42,7 +37,7 @@ public class MetroScreen extends AppCompatActivity {
                 "Hammamat El-Qobba", "Saray El-Qobba", "Hadayeq El-Zaitoun",
                 "Helmeyet El-Zaitoun", "El-Matareyya", "Ain Shams", "Ezbet El-Nakhl",
                 "El-Marg", "New El-Marg"};
-        db.insertValues(lines1);
+        db.insertValues(lines1);*/
 
         // Create a new ArrayAdapter for the Spinner
         spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
@@ -57,13 +52,53 @@ public class MetroScreen extends AppCompatActivity {
         // Set the ArrayAdapter as the adapter for the Spinner
         spinner.setAdapter(spinnerAdapter);
         spinner2.setAdapter(spinnerAdapter);
+        spinner.setSelection(0);
+        spinner2.setSelection(1);
 
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String newValue = parent.getItemAtPosition(position).toString();
+                if (newValue.equals(selectedValueSpinner2)) {
+                    // Inform the user they cannot select the same value
+                    Toast.makeText(MetroScreen.this, "You cannot select the same station for both spinners.", Toast.LENGTH_SHORT).show();
+                    // Revert to the previous selection
+                    int spinner1Position = spinnerAdapter.getPosition(selectedValueSpinner1);
+                    spinner.setSelection(spinner1Position, false);
+                } else {
+                    selectedValueSpinner1 = newValue;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
+
+        // Set up the listener for spinner2
+        spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                String newValue = parent.getItemAtPosition(position).toString();
+                if (newValue.equals(selectedValueSpinner1)) {
+                    // Inform the user they cannot select the same value
+                    Toast.makeText(MetroScreen.this, "You cannot select the same station for both spinners.", Toast.LENGTH_SHORT).show();
+                    // Revert to the previous selection
+                    int spinner2Position = spinnerAdapter.getPosition(selectedValueSpinner2);
+                    spinner2.setSelection(spinner2Position, false);
+                } else {
+                    selectedValueSpinner2 = newValue;
+                }
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+            }
+        });
 
         // Query the database for the metro line data
         String query = "SELECT " + MetroDB.COLUMN_LINE1 + " FROM " + MetroDB.MetroLines;
         Cursor cursor = db.getReadableDatabase().rawQuery(query, null);
-
-
 
         // Add all items of line1[] first
         if (cursor.moveToFirst()) {
@@ -74,6 +109,8 @@ public class MetroScreen extends AppCompatActivity {
                 spinnerAdapter.add(line1);
             } while (cursor.moveToNext()); // Move to the next row
         }
+
+
         cursor.close();
         Button metroDetailsButton = findViewById(R.id.button3);
         metroDetailsButton.setOnClickListener(new View.OnClickListener() {

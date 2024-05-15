@@ -26,6 +26,8 @@ public class BusScreen extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_bus_screen);
 
+        startService(new Intent(this, audioFragment.class));
+
         db = new BusDB(this);
         String[] m31 = {"Matarya Square", "El Taawun", "Mostorod", "Ring Road", "Adly Mansour", "Obour Market", "Mostaqbal City", "New Administrative Capital"};
         String[] m30 = {"Ain Shams", "Ain Shams Metro Station", "Al Marj Al Sharqiya stop", "Al Marj  Al Gharbiya stop", "Othman Residences", "Othman Residences", "Ring Road", "Ismailia Desert", "Middle Ring Road", "Bin Zayed North Axis", " New Administrative Capital"};

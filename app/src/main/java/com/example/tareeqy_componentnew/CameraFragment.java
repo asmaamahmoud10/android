@@ -99,7 +99,7 @@ public class CameraFragment extends Fragment {
         byte[] byteArray = stream.toByteArray();
 
         // Insert image into the database
-        long newRowId = MyDbHelper.getInstance(getContext()).insertImage(byteArray);
+        long newRowId = CameraDB.getInstance(getContext()).insertImage(byteArray);
 
         // Check if insertion was successful
         if (newRowId != -1) {
