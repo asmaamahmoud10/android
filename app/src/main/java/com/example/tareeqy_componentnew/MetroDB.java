@@ -53,7 +53,7 @@ public class MetroDB extends SQLiteOpenHelper {
     }
 
     public ArrayList<String> getStations(String selectedValue1, String selectedValue2) {
-        ArrayList<String> rows = new ArrayList<>();
+        ArrayList<String> stations = new ArrayList<>();
         SQLiteDatabase db = getReadableDatabase();
         Log.d("s1", "selectedValue1" + selectedValue1);
         Log.d("s1", "selectedValue2" + selectedValue2);
@@ -61,33 +61,26 @@ public class MetroDB extends SQLiteOpenHelper {
         int orderPosition1 = getOrderPosition(db, selectedValue1);
         int orderPosition2 = getOrderPosition(db, selectedValue2);
 
-
         // Create the query
         String query;
-        if (orderPosition1 < orderPosition2) {
-            query = "SELECT * FROM " + MetroLines + " WHERE (" + COLUMN_ORDER_POSITION + " BETWEEN ? AND ?) ORDER BY " + COLUMN_ORDER_POSITION;
-        } else {
-            query = "SELECT * FROM " + MetroLines + " WHERE (" + COLUMN_ORDER_POSITION + " BETWEEN ? AND ?) OR (" + COLUMN_ORDER_POSITION + " BETWEEN ? AND ?) ORDER BY " + COLUMN_ORDER_POSITION + " DESC";
-        }
-
-        // Execute the query
         Cursor cursor;
         if (orderPosition1 < orderPosition2) {
+            query = "SELECT * FROM " + MetroLines + " WHERE (" + COLUMN_ORDER_POSITION + " BETWEEN ? AND ?) ORDER BY " + COLUMN_ORDER_POSITION;
             cursor = db.rawQuery(query, new String[]{String.valueOf(orderPosition1), String.valueOf(orderPosition2)});
         } else {
-            cursor = db.rawQuery(query, new String[]{String.valueOf(orderPosition2), String.valueOf(orderPosition1), String.valueOf(orderPosition1), String.valueOf(orderPosition2)});
+            query = "SELECT * FROM " + MetroLines + " WHERE (" + COLUMN_ORDER_POSITION + " BETWEEN ? AND ?) ORDER BY " + COLUMN_ORDER_POSITION + " DESC";
+            cursor = db.rawQuery(query, new String[]{String.valueOf(orderPosition2), String.valueOf(orderPosition1)});
         }
 
-        if (cursor.moveToFirst()) {
-            do {
-                Log.d("" , "cursor: " + cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LINE1)));
-                String rowValue = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LINE1));
-                rows.add(rowValue);
-            } while (cursor.moveToNext());
+        while (cursor.moveToNext()) {
+            Log.d("" , "cursor: " + cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LINE1)));
+            String station = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LINE1));
+            stations.add(station);
         }
+
         cursor.close();
 
-        return rows;
+        return stations;
     }
     private int getOrderPosition(SQLiteDatabase db, String stationName) {
         String query = "SELECT " + COLUMN_ORDER_POSITION + " FROM " + MetroLines + " WHERE " + COLUMN_LINE1 + " = ?";

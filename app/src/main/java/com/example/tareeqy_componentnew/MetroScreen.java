@@ -39,17 +39,22 @@ public class MetroScreen extends AppCompatActivity {
                 "El-Marg", "New El-Marg"};
         db.insertValues(lines1);*/
 
-        // Create a new ArrayAdapter for the Spinner
         spinnerAdapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_item);
-
-        // Set the layout for the Spinner dropdown
         spinnerAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 
-        // Find the Spinner view by ID
+        String query = "SELECT " + MetroDB.COLUMN_LINE1 + " FROM " + MetroDB.MetroLines;
+        Cursor cursor = db.getReadableDatabase().rawQuery(query, null);
+        if (cursor.moveToFirst()) {
+            do {
+                String line1 = cursor.getString(cursor.getColumnIndexOrThrow(MetroDB.COLUMN_LINE1));
+                spinnerAdapter.add(line1);
+            } while (cursor.moveToNext());
+        }
+        cursor.close();
+
         Spinner spinner = findViewById(R.id.spinner);
         Spinner spinner2 = findViewById(R.id.spinner2);
 
-        // Set the ArrayAdapter as the adapter for the Spinner
         spinner.setAdapter(spinnerAdapter);
         spinner2.setAdapter(spinnerAdapter);
         spinner.setSelection(0);
@@ -60,9 +65,7 @@ public class MetroScreen extends AppCompatActivity {
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String newValue = parent.getItemAtPosition(position).toString();
                 if (newValue.equals(selectedValueSpinner2)) {
-                    // Inform the user they cannot select the same value
                     Toast.makeText(MetroScreen.this, "You cannot select the same station for both spinners.", Toast.LENGTH_SHORT).show();
-                    // Revert to the previous selection
                     int spinner1Position = spinnerAdapter.getPosition(selectedValueSpinner1);
                     spinner.setSelection(spinner1Position, false);
                 } else {
@@ -75,15 +78,12 @@ public class MetroScreen extends AppCompatActivity {
             }
         });
 
-        // Set up the listener for spinner2
         spinner2.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
             public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                 String newValue = parent.getItemAtPosition(position).toString();
                 if (newValue.equals(selectedValueSpinner1)) {
-                    // Inform the user they cannot select the same value
                     Toast.makeText(MetroScreen.this, "You cannot select the same station for both spinners.", Toast.LENGTH_SHORT).show();
-                    // Revert to the previous selection
                     int spinner2Position = spinnerAdapter.getPosition(selectedValueSpinner2);
                     spinner2.setSelection(spinner2Position, false);
                 } else {
@@ -96,22 +96,6 @@ public class MetroScreen extends AppCompatActivity {
             }
         });
 
-        // Query the database for the metro line data
-        String query = "SELECT " + MetroDB.COLUMN_LINE1 + " FROM " + MetroDB.MetroLines;
-        Cursor cursor = db.getReadableDatabase().rawQuery(query, null);
-
-        // Add all items of line1[] first
-        if (cursor.moveToFirst()) {
-            do {
-                // Get the value of the column for the current row
-                String line1 = cursor.getString(cursor.getColumnIndexOrThrow(MetroDB.COLUMN_LINE1));
-                // Add the value to the spinner adapter
-                spinnerAdapter.add(line1);
-            } while (cursor.moveToNext()); // Move to the next row
-        }
-
-
-        cursor.close();
         Button metroDetailsButton = findViewById(R.id.button3);
         metroDetailsButton.setOnClickListener(new View.OnClickListener() {
             @Override
